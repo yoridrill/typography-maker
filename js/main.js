@@ -155,14 +155,14 @@ const app = new Vue({
 
             const img = new Image();
             img.crossOrigin = 'Anonymous';
-            self.$refs.tgImg.src = url;
+            img.src = url;
 
-            // img.onload = () => {
-            //     ctx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH)
-            //     ctx.drawImage(img, 0, 0);
-            //     self.$refs.tgImg.src = self.$refs.tgCanvas.toDataURL();
-            //     DOMURL.revokeObjectURL(url);
-            // }
+            img.onload = () => {
+                ctx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH)
+                ctx.drawImage(img, 0, 0);
+                self.$refs.tgImg.src = self.$refs.tgCanvas.toDataURL();
+                DOMURL.revokeObjectURL(url);
+            }
         }
     }
 });

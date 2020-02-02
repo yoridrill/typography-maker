@@ -21,8 +21,15 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- <script src="https://kit.fontawesome.com/cff2ef245e.js" crossorigin="anonymous"></script> -->
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-min.css">
     <style>
+        [v-cloak] {
+            visibility: hidden;
+        }
+        body {
+            background-color: #e5eaef;
+        }
         .scale0_5 {
             transform: scale(0.5);
             transform-origin: left top;
@@ -33,44 +40,286 @@
         .fit-image {
             width: 100%;
         }
+        .preview-image {
+            height: 56px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translateY(-50%) translateX(-50%);
+            transform: translateY(-50%) translateX(-50%);
+        }
+        .clip {
+            overflow: hidden;
+            width: 56px;
+            height: 56px;
+            border-radius: 4px;
+            border: solid 2px #fff;
+            position: relative;
+            display: inline-block;
+        }
+        .previewCard {
+            background-color: #fff;
+            border-radius: 4px;
+            border: solid 1px rgba(0,0,0,0.2);
+            padding: 10px;
+            box-shadow: 0 0px 5px rgba(0,0,0,0.2);
+        }
+        .pb10 {
+            padding-bottom: 10px;
+        }
+        .pl10 {
+            padding-left: 10px;
+        }
+        .pt10 {
+            padding-top: 10px;
+        }
+        .pr10 {
+            padding-right: 10px;
+        }
+        .p10 {
+            padding: 10px;
+        }
+        .p5 {
+            padding: 5px;
+        }
+        .pt1 {
+            padding-top: 1px;
+        }
+        .ml10 {
+            margin-left: 10px;
+        }
+        .mt10 {
+            margin-top: 10px;
+        }
+        .mr10 {
+            margin-top: 10px;
+        }
+        .taRight {
+            text-align: right;
+        }
+
+        nav {
+            background-color: #03A9F4;
+            padding: 5px;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 0px 20px rgba(0,0,0,0.2);
+        }
+        .title {
+            font-size: x-large;
+            text-decoration: none;
+            color: #fff;
+            align-items: center;
+            font-family: 'Hiragino Kaku Gothic StdN';
+        }
+        .sub {
+            color: rgba(0, 0, 0, 0.67);
+            font-size: small;
+            padding-left: 10px;
+        }
+        .card {
+            background-color: #fff;
+            box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            border: solid 1px rgba(0,0,0,0.2);
+            padding: 10px;
+            margin: 5px;
+        }
+        .cardTitle {
+            font-size: xx-large;
+            color: #03A9F4;
+            padding-left: 10px;
+        }
+        .tabTitle {
+            text-align: center;
+        }
+        .tabTitle.selected {
+            color: #03A9F4;
+            border-bottom: solid 3px #03A9F4;
+        }
+        .textbox {
+            margin-left: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+
 
     </style>
-
 </head>
 
 <body>
     <div id="app">
         <nav>
-            <div class="nav-wrapper">
-                <a href="#" class="brand-logo">タイポグラフィメーカー</a>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="collapsible.html">使い方</a></li>
-                </ul>
+            <div class="pure-g">
+                <div class="pure-u-3-4">
+                    <a href="https://yoridrill.github.io/typography-maker/" class="title">タイポグラフィメーカー</a>
+                </div>
+                <div class="pure-u-1-4">
+                    <a class="pure-button pure-button-primary" href="#">使い方</a>
+                </div>
             </div>
         </nav>
 
-        <div>
-            <div class="row">
-                <div class="col s12 m6">
-                    <div class="card blue-grey darken-1">
-                        <div class="card-content white-text">
-                            <span class="card-title">Card Title</span>
-                            <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
-                            <p>アイウエリオ これは「テスト」大きな古時計1234567890😀</p>
-                            <i class="fas fa-desktop"></i>
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-1-2">
+                <div class="p10">
+                    <div class="previewCard pure-g">
+                        <div class="pure-u-4-5">
+                            <div class="p10">
+                                <b>テキスト主体の見出し画像が作成できます！</b>
+                                <p class="sub">右クリックで保存できます。<br>右図は中央でトリミングされる場合の見え方</p>
+                            </div>
                         </div>
+                        <div class="pure-u-1-5">
+                            <div class="pt10 pr10 taRight">
+                                <div class="clip">
+                                    <canvas ref="prCanvas" class="preview-image" :width="tgData.sizeW" :height="tgData.sizeH"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pure-u-1 pure-u-md-1-2">
+                <canvas ref="tgCanvas" class="fit-image" :width="tgData.sizeW" :height="tgData.sizeH"></canvas>
+            </div>
+        </div>
 
-                        <div class="card-action">
-                            <a href="#">This is a link</a>
-                            <a href="#">This is a link</a>
+        <div class="pure-g p5">
+
+            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
+                <div class="card">
+                    <div class="cardTitle">配色</div>
+                    <p class="sub">背景、文字色、アクセントの3色設定できます。</p>
+                    <div class="pure-g">
+                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'random'}" @click="tab.color = 'random'">
+                            おまかせ
                         </div>
+                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'custom'}" @click="tab.color = 'custom'">
+                            カスタム
+                        </div>
+                    </div>
+                    <div class="pt10 pr10">
+                        <form class="pure-form">
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-2 taRight">
+                                    <div class="p10">背景</div>
+                                </div>
+                                <input v-model="tgData.color.bg" type="text" placeholder="#ffffff" class="pure-u-1-2">
+                            </div>
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-2 taRight">
+                                    <div class="p10">文字色</div>
+                                </div>
+                                <input v-model="tgData.color.text" type="text" placeholder="#000000" class="pure-u-1-2">
+                            </div>
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-2 taRight">
+                                    <div class="p10">アクセント</div>
+                                </div>
+                                <input v-model="tgData.color.point" type="text" placeholder="#ffff00" class="pure-u-1-2">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="pt1">
+                    <div class="card">
+                        <div class="cardTitle">効果</div>
+                        <p class="sub">アクセントの色を使って効果を付けます。</p>
+                        <div class="pl10 pr10">
+                            <form class="pure-form">
+                                <select v-model="tgData.effect" class="pure-input-1">
+                                    <option :value="null">なし</option>
+                                    <option :value="'longShadow'">ロングシャドウ</option>
+                                    <option :value="'fuchidori'">縁取り</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-2">
+                <div class="card">
+                    <div class="cardTitle">テキスト</div>
+                    <p class="sub">&lt;br&gt;で改行、&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。</p>
+
+                    <div class="pure-g">
+                        <div v-for="t, index in tgData.text" class="pure-u-1-3 tabTitle" :class="{'selected': tab.text === index}" @click="tab.text = index">
+                            {{index+1}}
+                        </div>
+                    </div>
+
+                    <div class="pt10 pr10">
+                        <form v-for="t, index in tgData.text" v-show="index === tab.text" class="pure-form">
+                            <textarea v-model="t.content" class="textbox" placeholder="テキスト"></textarea>
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-3 taRight">
+                                    <div class="p10">サイズ</div>
+                                </div>
+                                <input v-model="t.size" type="number" placeholder="16" class="pure-u-1-6">
+                                <div class="pure-u-1-2">
+                                    <div class="pl10">
+                                        <select v-model="t.font" class="pure-input-1 mt10">
+                                            <option v-for="f in fontList" :value="f.name">{{f.label}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-3 taRight">
+                                    <div class="p10">フォント</div>
+                                </div>
+                                <input v-model="t.font" type="text" placeholder="sans-serif" class="pure-u-2-3">
+                            </div>
+                            <div class="pure-g">
+                                <div class="pure-u-1-3 taRight">
+                                    <div class="p10">位置</div>
+                                </div>
+                                <div class="pure-u-2-3">
+                                    <div v-for="p in textPos" class="pure-u-1-3">
+                                        <label class="pure-radio">
+                                            <input type="radio" v-model="t.pos" :value="p.str">
+                                            {{p.label}}
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
+                <div class="card">
+                    <div class="cardTitle">サイズ</div>
+                    <div class="pt10 pr10">
+                        <form class="pure-form">
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-2 taRight">
+                                    <div class="p10">幅</div>
+                                </div>
+                                <input v-model="tgData.sizeW" type="number" placeholder="1280" class="pure-u-1-2">
+                            </div>
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-2 taRight">
+                                    <div class="p10">高さ</div>
+                                </div>
+                                <input v-model="tgData.sizeH" type="number" placeholder="670" class="pure-u-1-2">
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
         <div ref="html" class="none">
-            <div class="wrapper" :style="{backgroundColor: tgData.color.bg}">
+            <div class="wrapper" :class="tgData.effect" :style="{backgroundColor: tgData.color.bg}">
                 <div class="mark"></div>
                 <template v-for="txt in tgData.text">
                     <div v-if="txt.pos.match('cc')" class="ab-100 table-cc">
@@ -84,12 +333,12 @@
             </div>
         </div>
 
-        <canvas ref="tgCanvas" class="none_" :width="tgData.sizeW" :height="tgData.sizeH"></canvas>
 
-        <img ref="tgImg" class="fit-image">
+
+
+
     </div>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-             -->
+
     <script src="js/main.js"></script>
 </body>
 

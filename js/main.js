@@ -3,29 +3,92 @@ const app = new Vue({
     data: {
         tgData: {
             color: {
-                bg: '#ccccff',
+                bg: '#B3E5FC',
                 text: '#000',
                 point: '#ee5555',
             },
             text: [{
-                content: 'おお<br>おあ123い<bb>おう</bb>ええうううおおおう',
+                content: 'これは<br><bb>サンプル</bb>です。',
                 pos: 'cc',
                 font: 'Hiragino Kaku Gothic StdN',
                 size: 16
             }, {
-                content: 'おおおあ123いおうええうううおおおう',
+                content: '「縦書き」は<br>こんな感じです。',
                 pos: 'vr',
                 font: 'serif',
-                size: 5
+                size: 8
+            }, {
+                content: 'Typography maker',
+                pos: 'bc',
+                font: 'serif',
+                size: 10
             }],
-            textEff: null,
-            mark: [{
+            effect: null,
+            mark: {
                 img: null,
                 pos: null
-            }],
+            },
             sizeW: 1280,
             sizeH: 670
-        }
+        },
+        ctx: null,
+        prCtx: null,
+        tab: {
+            color: 'random',
+            text: 0
+        },
+        textPos: [{
+            str: 'tl',
+            label: '左上'
+        }, {
+            str: 'cc',
+            label: '中央'
+        }, {
+            str: 'tr',
+            label: '右上'
+        }, {
+            str: 'bl',
+            label: '左下'
+        }, {
+            str: 'bc',
+            label: '中下'
+        }, {
+            str: 'br',
+            label: '右下'
+        }, {
+            str: 'vl',
+            label: '縦左'
+        }, {
+            str: 'vc',
+            label: '縦中'
+        }, {
+            str: 'vr',
+            label: '縦右'
+        }],
+        fontList: [
+            {
+                name: 'sans-serif',
+                label: 'ゴシック体'
+            }, {
+                name: 'serif',
+                label: '明朝体'
+            }, {
+                name: 'YuKyokasho',
+                label: '游教科書体'
+            }, {
+                name: 'YuGothic',
+                label: '游ゴシック体'
+            }, {
+                name: 'YuMincho',
+                label: '游明朝体'
+            }, {
+                name: 'Hiragino Kaku Gothic StdN',
+                label: 'ヒラギノ角ゴ StdN'
+            }, {
+                name: 'Corporate Logo Bold',
+                label: 'コーポレート・ロゴB Bold'
+            }
+        ]
     },
     created: function() {
         const self = this;
@@ -43,18 +106,42 @@ const app = new Vue({
     mounted: function() {
         const self = this;
 
+        self.ctx = self.$refs.tgCanvas.getContext('2d');
+        self.prCtx = self.$refs.prCanvas.getContext('2d');
+
         self.createImg();
     },
     computed: {
-        // queryString: function () {
-        //     const self = this;
-        //
-        //     let str = '?data=1';
-        //     for (key in self.tgData) {
-        //         str += `&${key}=${self.tgData[key]}`;
-        //     }
-        //     return str;
-        // }
+        queryString: function () {
+            const self = this;
+
+            let str = '?data=1';
+            for (key in self.tgData) {
+                if (self.tgData[key] instanceof Object) {
+                    for (key2 in self.tgData[key]) {
+                        if (self.tgData[key][key2] instanceof Object) {
+                            for (key3 in self.tgData[key][key2]) {
+                                str += `&${key}${key2}${key3}=${self.tgData[key][key2][key3]}`;
+                            }
+                        } else if (self.tgData[key][key2]) {
+                            str += `&${key}${key2}=${self.tgData[key][key2]}`;
+                        }
+                    }
+                } else if (self.tgData[key]) {
+                    str += `&${key}=${self.tgData[key]}`;
+                }
+            }
+            return str;
+        }
+    },
+    watch: {
+        queryString: function() {
+            const self = this;
+            //history.replaceState('', '', self.queryString);
+            Vue.nextTick(function () {
+                self.createImg();
+            });
+        }
     },
     methods: {
         textStyle: function(txt) {
@@ -64,8 +151,16 @@ const app = new Vue({
         },
         createImg: function() {
             const self = this;
+            console.log('aa');
             const serializeHtml = (new XMLSerializer).serializeToString(self.$refs.html);
-            const ctx = self.$refs.tgCanvas.getContext('2d');
+
+            let longShadow = `text-shadow: 1px 1px 0 ${self.tgData.color.point}`;
+            for (let i=2; i<self.tgData.sizeH/2; i++) {
+                longShadow += `,${i}px ${i}px 0 ${self.tgData.color.point}`
+            }
+            longShadow += ';'
+
+
             const data =
                 `
             <svg xmlns='http://www.w3.org/2000/svg' viewBox='0, 0, ${self.tgData.sizeW}, ${self.tgData.sizeH}' width='${self.tgData.sizeW}' height='${self.tgData.sizeH}'>
@@ -123,6 +218,8 @@ const app = new Vue({
                             writing-mode: vertical-rl;
                             text-orientation: upright;
                             padding-top: 6vmin;
+                            font-feature-settings: initial;
+                            -webkit-font-feature-settings: initial;
                         }
                         .tp-vc {
                             display: table-cell;
@@ -138,13 +235,28 @@ const app = new Vue({
                             display: table-cell;
                             padding-right: 6vmin;
                         }
-
+                        .fuchidori {
+                            text-shadow:
+                            ${self.tgData.color.point} 4px 0px 1px,  ${self.tgData.color.point} -4px 0px 1px,
+                            ${self.tgData.color.point} 0px -4px 1px, ${self.tgData.color.point} 0px 4px 1px,
+                            ${self.tgData.color.point} 4px 4px 1px, ${self.tgData.color.point} -4px 4px 1px,
+                            ${self.tgData.color.point} 4px -4px 1px, ${self.tgData.color.point} -4px -4px 1px,
+                            ${self.tgData.color.point} 2px 4px 1px,  ${self.tgData.color.point} -2px 4px 1px,
+                            ${self.tgData.color.point} 2px -4px 1px, ${self.tgData.color.point} -2px -4px 1px,
+                            ${self.tgData.color.point} 4px 2px 1px,  ${self.tgData.color.point} -4px 2px 1px,
+                            ${self.tgData.color.point} 4px -2px 1px, ${self.tgData.color.point} -4px -2px 1px;
+                        }
+                        .longShadow {
+                            ${longShadow}
+                        }
                         </style>
                         ${serializeHtml}
                     </div>
               </foreignObject>
             </svg>
                 `;
+
+                console.log(data);
 
             const svg = new Blob([data], {
                 type: 'image/svg+xml'
@@ -158,9 +270,10 @@ const app = new Vue({
             img.src = url;
 
             img.onload = () => {
-                ctx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH)
-                ctx.drawImage(img, 0, 0);
-                self.$refs.tgImg.src = self.$refs.tgCanvas.toDataURL();
+                self.ctx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH);
+                self.ctx.drawImage(img, 0, 0);
+                self.prCtx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH);
+                self.prCtx.drawImage(img, 0, 0);
                 DOMURL.revokeObjectURL(url);
             }
         }

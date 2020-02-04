@@ -52,7 +52,7 @@
             overflow: hidden;
             width: 56px;
             height: 56px;
-            border-radius: 4px;
+            border-radius: 6px;
             border: solid 2px #fff;
             position: relative;
             display: inline-block;
@@ -94,6 +94,9 @@
         .mr10 {
             margin-top: 10px;
         }
+        .m10 {
+            margin: 10px;
+        }
         .taRight {
             text-align: right;
         }
@@ -110,7 +113,9 @@
             text-decoration: none;
             color: #fff;
             align-items: center;
-            font-family: 'Hiragino Kaku Gothic StdN';
+            font-family: 'Hiragino Kaku Gothic StdN', 'Yu Gothic', sans-serif;
+            font-weight: 900;
+            line-height: 40px;
         }
         .sub {
             color: rgba(0, 0, 0, 0.67);
@@ -142,8 +147,9 @@
             margin-bottom: 10px;
             width: 100%;
         }
-
-
+        .pure-button:focus {
+            background-image: initial;
+        }
 
     </style>
 </head>
@@ -168,7 +174,7 @@
                         <div class="pure-u-4-5">
                             <div class="p10">
                                 <b>テキスト主体の見出し画像が作成できます！</b>
-                                <p class="sub">右クリックで保存できます。<br>右図は中央でトリミングされる場合の見え方</p>
+                                <p class="sub">変更がリアルタイムで反映されます。<br>右クリックで保存できます。</p>
                             </div>
                         </div>
                         <div class="pure-u-1-5">
@@ -186,7 +192,7 @@
             </div>
         </div>
 
-        <div class="pure-g p5">
+        <div class="pure-g p5" v-cloak>
 
             <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
                 <div class="card">
@@ -200,7 +206,12 @@
                             カスタム
                         </div>
                     </div>
-                    <div class="pt10 pr10">
+
+                    <div v-show="tab.color === 'random'" class="p10">
+                        <button v-for="cl in colorList" class="pure-button pure-u-1-2" :style="{backgroundColor: cl.currColor,
+                        color: cl.currColorText}" v-on:click="setRandomColor(cl)">{{cl.label}}</button>
+                    </div>
+                    <div v-show="tab.color === 'custom'" class="pt10 pr10">
                         <form class="pure-form">
                             <div class="pure-g pb10">
                                 <div class="pure-u-1-2 taRight">
@@ -228,12 +239,13 @@
                     <div class="card">
                         <div class="cardTitle">効果</div>
                         <p class="sub">アクセントの色を使って効果を付けます。</p>
-                        <div class="pl10 pr10">
+                        <div class="pl10 pr10 pb10">
                             <form class="pure-form">
                                 <select v-model="tgData.effect" class="pure-input-1">
-                                    <option :value="null">なし</option>
+                                    <option :value="undefined">なし</option>
                                     <option :value="'longShadow'">ロングシャドウ</option>
                                     <option :value="'fuchidori'">縁取り</option>
+                                    <option :value="'stripe'">ストライプ</option>
                                 </select>
                             </form>
                         </div>
@@ -332,10 +344,6 @@
                 </template>
             </div>
         </div>
-
-
-
-
 
     </div>
 

@@ -24,12 +24,14 @@ const app = new Vue({
                 size: 8
             }],
             effect: 'longShadow',
-            mark: {
-                img: null,
-                pos: null
-            },
-            sizeW: 1280,
-            sizeH: 670
+            size: {
+                w: 1280,
+                h: 670
+            }
+        },
+        img: {
+            dataURL: null,
+            size: 'cover'
         },
         ctx: null,
         prCtx: null,
@@ -73,27 +75,39 @@ const app = new Vue({
                 name: 'serif',
                 label: '明朝体'
             }, {
-                name: 'YuKyokasho, "Yu Kyokasho"',
-                label: '游教科書体'
-            }, {
                 name: 'YuGothic, "Yu Gothic"',
                 label: '游ゴシック体'
             }, {
                 name: 'YuMincho, "Yu Mincho"',
                 label: '游明朝体'
             }, {
+                name: 'YuKyokasho, "Yu Kyokasho"',
+                label: '游教科書体'
+            }, {
+                name: 'Source Han Sans',
+                label: '源ノ角ゴシック'
+            }, {
+                name: 'Source Han Serif',
+                label: '源ノ明朝'
+            }, {
                 name: 'Hiragino Kaku Gothic StdN',
                 label: 'ヒラギノ角ゴ StdN'
             }, {
                 name: 'Corporate Logo Bold',
                 label: 'コーポレート・ロゴB Bold'
+            }, {
+                name: 'HannariMincho',
+                label: 'はんなり明朝'
+            }, {
+                name: '"02UtsukushiMincho"',
+                label: 'うつくし明朝体'
             }
         ],
         colorList: [
             {
                 label: 'ふわっと',
-                s: 50,
-                l: 90,
+                s: 60,
+                l: 85,
                 toneType: 0,
                 currColor: '#fff',
                 currColorText: '#fff',
@@ -123,6 +137,45 @@ const app = new Vue({
                 currColorText: '#fff',
                 currColorPoint: '#fff'
             }
+        ],
+        sizeList: [
+            {
+                label: 'note 記事見出し画像',
+                size: {
+                    w: 1280,
+                    h: 670
+                }
+            },{
+                label: 'note マガジン/クリエイター ヘッダー画像',
+                size: {
+                    w: 1600,
+                    h: 568
+                }
+            },{
+                label: 'Twitter ヘッダー画像',
+                size: {
+                    w: 1500,
+                    h: 500
+                }
+            },{
+                label: 'はてなブックマーク',
+                size: {
+                    w: 1200,
+                    h: 840
+                }
+            },{
+                label: 'OGP 1200×630',
+                size: {
+                    w: 1200,
+                    h: 630
+                }
+            },{
+                label: '正方形 1024',
+                size: {
+                    w: 1024,
+                    h: 1024
+                }
+            }
         ]
     },
     created: function() {
@@ -150,8 +203,8 @@ const app = new Vue({
         self.tgData.text[2].font = arg.text2font;
         self.tgData.text[2].size  = arg.text2size;
         self.tgData.effect = arg.effect;
-        self.tgData.sizeW = arg.sizeW;
-        self.tgData.sizeH = arg.sizeH;
+        self.tgData.size.w = arg.sizew;
+        self.tgData.size.h = arg.sizeh;
 
         if (!arg.colorbg && !arg.colortext && !arg.colorpoint) {
             self.randomColor(self.colorList[3]);
@@ -173,10 +226,7 @@ const app = new Vue({
         queryString: function () {
             const self = this;
 
-            console.log('cc');
-
             self.tgData.text.forEach(txt => {
-                console.log(JSON.stringify(txt.content));
                 txt.content = txt.content.replace(/<iframe/gi, '&lt;iframe');
             });
 
@@ -207,6 +257,16 @@ const app = new Vue({
                 self.createImg();
                 history.replaceState('', '', self.queryString);
             });
+        },
+        img: {
+            handler: function() {
+                const self = this;
+
+                Vue.nextTick(function () {
+                    self.createImg();
+                });
+            },
+            deep: true
         }
     },
     methods: {
@@ -230,22 +290,38 @@ const app = new Vue({
             cl.currColorText = ((cl.l > 80) ? '#000' : '#fff');
             cl.currColorPoint = `hsl(${cl.toneType ? h : (h+180)%360},${cl.s}%,${cl.l+cl.toneType*6}%)`;
         },
+        selectImage: function(e) {
+            const self = this;
+            if (!e.target.files.length) {
+                return;
+            }
+
+            const file = e.target.files[0];
+            const fr = new FileReader();
+            fr.onload = function() {
+                self.img.dataURL = fr.result;
+            }
+            fr.readAsDataURL(file);
+        },
+        cancelImage: function() {
+            const self = this;
+            self.img.dataURL = null;
+        },
         createImg: function() {
             const self = this;
-            console.log('aa');
             const serializeHtml = (new XMLSerializer).serializeToString(self.$refs.html);
 
-            let longShadow = `text-shadow: ${self.tgData.color.point} 1px 1px`;
+            let longShadow = `text-shadow: 1px 1px 0 ${self.tgData.color.point}`;
 
             if (self.tgData.effect === 'longShadow') {
-                for (let i=2; i<self.tgData.sizeH; i++) {
-                    longShadow += `,${self.tgData.color.point} ${i}px ${i}px`
+                for (let i=2; i<self.tgData.size.h; i++) {
+                    longShadow += `,${i}px ${i}px 0 ${self.tgData.color.point}`
                 }
             }
             longShadow += ';'
 
             const data =
-`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0, 0, ${self.tgData.sizeW}, ${self.tgData.sizeH}' width='${self.tgData.sizeW}' height='${self.tgData.sizeH}'>
+`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0, 0, ${self.tgData.size.w}, ${self.tgData.size.h}' width='${self.tgData.size.w}' height='${self.tgData.size.h}'>
     <foreignObject width='100%' height='100%'>
         <div xmlns="http://www.w3.org/1999/xhtml">
             <style>
@@ -320,14 +396,14 @@ const app = new Vue({
             }
             .fuchidori {
                 text-shadow:
-                ${self.tgData.color.point} 4px 0px 1px,  ${self.tgData.color.point} -4px 0px 1px,
-                ${self.tgData.color.point} 0px -4px 1px, ${self.tgData.color.point} 0px 4px 1px,
-                ${self.tgData.color.point} 4px 4px 1px, ${self.tgData.color.point} -4px 4px 1px,
-                ${self.tgData.color.point} 4px -4px 1px, ${self.tgData.color.point} -4px -4px 1px,
-                ${self.tgData.color.point} 2px 4px 1px,  ${self.tgData.color.point} -2px 4px 1px,
-                ${self.tgData.color.point} 2px -4px 1px, ${self.tgData.color.point} -2px -4px 1px,
-                ${self.tgData.color.point} 4px 2px 1px,  ${self.tgData.color.point} -4px 2px 1px,
-                ${self.tgData.color.point} 4px -2px 1px, ${self.tgData.color.point} -4px -2px 1px;
+                ${self.tgData.color.point} 8px 0px 1px,  ${self.tgData.color.point} -8px 0px 1px,
+                ${self.tgData.color.point} 0px -8px 1px, ${self.tgData.color.point} 0px 8px 1px,
+                ${self.tgData.color.point} 8px 8px 1px, ${self.tgData.color.point} -8px 8px 1px,
+                ${self.tgData.color.point} 8px -8px 1px, ${self.tgData.color.point} -8px -8px 1px,
+                ${self.tgData.color.point} 4px 8px 1px,  ${self.tgData.color.point} -4px 8px 1px,
+                ${self.tgData.color.point} 4px -8px 1px, ${self.tgData.color.point} -4px -8px 1px,
+                ${self.tgData.color.point} 8px 4px 1px,  ${self.tgData.color.point} -8px 4px 1px,
+                ${self.tgData.color.point} 8px -4px 1px, ${self.tgData.color.point} -8px -4px 1px;
             }
             .longShadow {
                 ${longShadow}
@@ -356,9 +432,9 @@ const app = new Vue({
             img.src = url;
 
             img.onload = () => {
-                self.ctx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH);
+                self.ctx.clearRect(0, 0, self.tgData.size.w, self.tgData.size.h);
                 self.ctx.drawImage(img, 0, 0);
-                self.prCtx.clearRect(0, 0, self.tgData.sizeW, self.tgData.sizeH);
+                self.prCtx.clearRect(0, 0, self.tgData.size.w, self.tgData.size.h);
                 self.prCtx.drawImage(img, 0, 0);
                 DOMURL.revokeObjectURL(url);
             }

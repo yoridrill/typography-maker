@@ -8,18 +8,17 @@
     <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <title>タイポグラフィメーカー</title>
 
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <!-- <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet"> -->
-    <meta name="description" content="ページの解説">
-    <meta property='og:site_name' content="サイトのタイトル">
-    <meta property='og:title' content="ページのタイトル">
-    <meta property="og:description" content="ページの解説">
-    <meta property="og:url" content="ページのURL">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <meta name="description" content="テキスト主体の見出し画像が作成できます。">
+    <meta property='og:site_name' content="タイポグラフィメーカー">
+    <meta property='og:title' content="タイポグラフィメーカー">
+    <meta property="og:description" content="テキスト主体の見出し画像が作成できます。">
+    <meta property="og:url" content="https://yoridrill.github.io/typography-maker/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="シェアされたときに表示する画像">
+    <meta property="og:image" content="https://yoridrill.github.io/typography-maker/header.png">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <!-- <script src="https://kit.fontawesome.com/cff2ef245e.js" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-min.css">
@@ -106,7 +105,7 @@
             padding: 5px;
             padding-left: 10px;
             margin-bottom: 10px;
-            box-shadow: 0 0px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
         .title {
             font-size: x-large;
@@ -124,7 +123,7 @@
         }
         .card {
             background-color: #fff;
-            box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
             border-radius: 4px;
             border: solid 1px rgba(0,0,0,0.2);
             padding: 10px;
@@ -150,6 +149,28 @@
         .pure-button:focus {
             background-image: initial;
         }
+        .fuwaShadow{
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+        .formImageSelect {
+            position: relative;
+            width: 100%;
+        }
+        .formImageSelect input {
+            position: absolute;
+            opacity: 0;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        .copyright {
+            padding-top: 100px;
+            padding-bottom: 20px;
+            text-align: center;
+            font-size: xx-small;
+            color: rgba(0, 0, 0, 0.67);
+        }
 
     </style>
 </head>
@@ -169,18 +190,22 @@
 
         <div class="pure-g">
             <div class="pure-u-1 pure-u-md-1-2">
+                <div class="m10 p10" style="background-color: #fff;">
+                    <div style="color: #03A9F4; padding: 10px">テキスト主体の見出し画像が作成できます！</div>
+                    <p class="sub">変更がリアルタイムで反映されます。<br>URLに変更内容が画像以外は保存されるので、ブックマークすることでテンプレート代わりに使えます。<br>画像は右クリックで保存できます。</p>
+                </div>
                 <div class="p10">
                     <div class="previewCard pure-g">
                         <div class="pure-u-4-5">
                             <div class="p10">
-                                <b>テキスト主体の見出し画像が作成できます！</b>
-                                <p class="sub">変更がリアルタイムで反映されます。<br>右クリックで保存できます。</p>
+                                <b>プレビュー</b>
+                                <p class="sub">正方形サムネイルとしてトリミングされたときのイメージ</p>
                             </div>
                         </div>
                         <div class="pure-u-1-5">
                             <div class="pt10 pr10 taRight">
                                 <div class="clip">
-                                    <canvas ref="prCanvas" class="preview-image" :width="tgData.sizeW" :height="tgData.sizeH"></canvas>
+                                    <canvas ref="prCanvas" class="preview-image" :width="tgData.size.w" :height="tgData.size.h"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -188,7 +213,7 @@
                 </div>
             </div>
             <div class="pure-u-1 pure-u-md-1-2">
-                <canvas ref="tgCanvas" class="fit-image" :width="tgData.sizeW" :height="tgData.sizeH"></canvas>
+                <canvas ref="tgCanvas" class="fit-image fuwaShadow" :width="tgData.size.w" :height="tgData.size.h"></canvas>
             </div>
         </div>
 
@@ -196,7 +221,7 @@
 
             <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
                 <div class="card">
-                    <div class="cardTitle">配色</div>
+                    <div class="cardTitle"><i class="fas fa-palette"></i> 配色</div>
                     <p class="sub">背景、文字色、アクセントの3色設定できます。</p>
                     <div class="pure-g">
                         <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'random'}" @click="tab.color = 'random'">
@@ -209,7 +234,7 @@
 
                     <div v-show="tab.color === 'random'" class="p10">
                         <button v-for="cl in colorList" class="pure-button pure-u-1-2" :style="{backgroundColor: cl.currColor,
-                        color: cl.currColorText}" v-on:click="setRandomColor(cl)">{{cl.label}}</button>
+                        color: cl.currColorText}" @click="setRandomColor(cl)">{{cl.label}}</button>
                     </div>
                     <div v-show="tab.color === 'custom'" class="pt10 pr10">
                         <form class="pure-form">
@@ -237,7 +262,7 @@
 
                 <div class="pt1">
                     <div class="card">
-                        <div class="cardTitle">効果</div>
+                        <div class="cardTitle"><i class="fas fa-flask"></i> 効果</div>
                         <p class="sub">アクセントの色を使って効果を付けます。</p>
                         <div class="pl10 pr10 pb10">
                             <form class="pure-form">
@@ -257,8 +282,8 @@
 
             <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-2">
                 <div class="card">
-                    <div class="cardTitle">テキスト</div>
-                    <p class="sub">&lt;br&gt;で改行、&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。</p>
+                    <div class="cardTitle"><i class="fas fa-edit"></i> テキスト</div>
+                    <p class="sub">&lt;br&gt;で改行、&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。フォントはインストールしているものだけ正しく適用されます。</p>
 
                     <div class="pure-g">
                         <div v-for="t, index in tgData.text" class="pure-u-1-3 tabTitle" :class="{'selected': tab.text === index}" @click="tab.text = index">
@@ -307,32 +332,70 @@
                 </div>
             </div>
 
-            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
-                <div class="card">
-                    <div class="cardTitle">サイズ</div>
-                    <div class="pt10 pr10">
-                        <form class="pure-form">
-                            <div class="pure-g pb10">
-                                <div class="pure-u-1-2 taRight">
-                                    <div class="p10">幅</div>
-                                </div>
-                                <input v-model="tgData.sizeW" type="number" placeholder="1280" class="pure-u-1-2">
+            <div class="pure-u-1 pure-u-sm-1 pure-u-lg-1-4">
+                <div class="pure-g">
+                    <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1">
+                        <div class="card">
+                            <div class="cardTitle"><i class="far fa-file-image"></i> 画像</div>
+                            <div class="pt10 pr10">
+                                <form class="pure-form">
+                                    <div class="pure-g pb10 pl10">
+                                        <div class="pure-u-1-2">
+                                            <div v-if="!img.dataURL" class="pure-button formImageSelect">
+                                                <input @change="selectImage($event)" type="file" accept="image/*">
+                                                ファイル選択
+                                            </div>
+                                            <button v-else @click="cancelImage()" class="pure-button pure-input-1">取消</button>
+                                        </div>
+                                        <div class="pure-u-1-2">
+                                            <div class="pl10">
+                                                <select v-model="img.size" class="pure-input-1">
+                                                    <option :value="'cover'">カバー</option>
+                                                    <option :value="'contain'">収める</option>
+                                                    <option :value="'10%'">敷き詰め</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="pure-g pb10">
-                                <div class="pure-u-1-2 taRight">
-                                    <div class="p10">高さ</div>
-                                </div>
-                                <input v-model="tgData.sizeH" type="number" placeholder="670" class="pure-u-1-2">
+                        </div>
+                    </div>
+
+                    <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1">
+                        <div class="card">
+                            <div class="cardTitle"><i class="fas fa-ruler-combined"></i> サイズ</div>
+                            <div class="pt10 pr10">
+                                <form class="pure-form">
+                                    <div class="pl10 pb10">
+                                        <select v-model="tgData.size" class="pure-input-1">
+                                            <option v-for="s in sizeList" :value="s.size">{{s.label}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="pure-g pb10">
+                                        <div class="pure-u-1-4 taRight">
+                                            <div class="p10">幅</div>
+                                        </div>
+                                        <input v-model="tgData.size.w" type="number" placeholder="1280" class="pure-u-1-4">
+                                        <div class="pure-u-1-4 taRight">
+                                            <div class="p10">高さ</div>
+                                        </div>
+                                        <input v-model="tgData.size.h" type="number" placeholder="670" class="pure-u-1-4">
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <section class="copyright">
+            © 2020 タイポグラフィメーカー
+        </section>
+
         <div ref="html" class="none">
             <div class="wrapper" :class="tgData.effect" :style="{backgroundColor: tgData.color.bg}">
-                <div class="mark"></div>
                 <template v-for="txt in tgData.text">
                     <div v-if="txt.pos.match('cc')" class="ab-100 table-cc">
                         <div class="tp-cc" :style="textStyle(txt)" v-html="txt.content"></div>
@@ -342,9 +405,9 @@
                     </div>
                     <div v-else class="ab-100" :class="'tp-'+txt.pos" :style="textStyle(txt)" v-html="txt.content"></div>
                 </template>
+                <div v-if="img.dataURL" :style="{backgroundImage: 'url(' + img.dataURL + ')', backgroundSize: img.size, backgroundPosition: 'center', height: '100%'}"></div>
             </div>
         </div>
-
     </div>
 
     <script src="js/main.js"></script>

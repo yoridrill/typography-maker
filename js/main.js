@@ -8,7 +8,7 @@ const app = new Vue({
                 point: 'hsl(151,95%,36%)',
             },
             text: [{
-                content: 'これは<br><bb>サンプル</bb>です。',
+                content: '',
                 pos: 'cc',
                 font: 'sans-serif',
                 size: 16

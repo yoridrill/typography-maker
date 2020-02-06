@@ -400,9 +400,11 @@
 
         <div ref="html" class="none">
             <div class="wrapper" :class="tgData.effect" :style="{backgroundColor: tgData.color.bg}">
-                <template v-for="txt in tgData.text">
+                <template v-for="(txt, index) in tgData.text">
                     <div v-if="txt.pos.match('cc')" class="ab-100 table-cc">
-                        <div class="tp-cc" :style="textStyle(txt)" v-html="txt.content"></div>
+                        <div v-if="(!index && !txt.content)" class="tp-cc" :style="textStyle(txt)">これは<br><bb>サンプル</bb>です。</div>
+                        <div v-else class="tp-cc" :style="textStyle(txt)" v-html="txt.content"></div>
+
                     </div>
                     <div v-else-if="txt.pos.match('v')" class="ab-100 table-v">
                         <div :class="'tp-'+txt.pos" :style="textStyle(txt)" v-html="txt.content"></div>

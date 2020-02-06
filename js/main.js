@@ -3,9 +3,9 @@ const app = new Vue({
     data: {
         tgData: {
             color: {
-                bg: 'hsl(161,95%,30%)',
+                bg: 'hsl(151,95%,30%)',
                 text: '#fff',
-                point: 'hsl(161,95%,40%)',
+                point: 'hsl(151,95%,36%)',
             },
             text: [{
                 content: 'これは<br><bb>サンプル</bb>です。',
@@ -23,7 +23,7 @@ const app = new Vue({
                 font: 'serif',
                 size: 8
             }],
-            effect: 'longShadow',
+            effect: 'stripe',
             size: {
                 w: 1280,
                 h: 670
@@ -164,6 +164,12 @@ const app = new Vue({
                     h: 840
                 }
             },{
+                label: 'pixiv 小説 表紙',
+                size: {
+                    w: 480,
+                    h: 600
+                }
+            },{
                 label: 'OGP 1200×630',
                 size: {
                     w: 1200,
@@ -187,24 +193,24 @@ const app = new Vue({
             acc[cur.split('=')[0]] = decodeURIComponent(cur.split('=')[1]);
             return acc;
         }, {});
-        self.tgData.color.bg = arg.colorbg;
-        self.tgData.color.text = arg.colortext;
-        self.tgData.color.point = arg.colorpoint;
-        self.tgData.text[0].content = arg.text0content;
-        self.tgData.text[0].pos = arg.text0pos;
-        self.tgData.text[0].font = arg.text0font;
-        self.tgData.text[0].size = arg.text0size;
-        self.tgData.text[1].content = arg.text1content;
-        self.tgData.text[1].pos = arg.text1pos;
-        self.tgData.text[1].font = arg.text1font;
-        self.tgData.text[1].size  = arg.text1size;
-        self.tgData.text[2].content = arg.text2content;
-        self.tgData.text[2].pos = arg.text2pos;
-        self.tgData.text[2].font = arg.text2font;
-        self.tgData.text[2].size  = arg.text2size;
-        self.tgData.effect = arg.effect;
-        self.tgData.size.w = arg.sizew;
-        self.tgData.size.h = arg.sizeh;
+        arg.colorbg && (self.tgData.color.bg = arg.colorbg);
+        arg.colortext && (self.tgData.color.text = arg.colortext);
+        arg.colorpoint && (self.tgData.color.point = arg.colorpoint);
+        arg.text0content && (self.tgData.text[0].content = arg.text0content);
+        arg.text0pos && (self.tgData.text[0].pos = arg.text0pos);
+        arg.text0font && (self.tgData.text[0].font = arg.text0font);
+        arg.text0size && (self.tgData.text[0].size = arg.text0size);
+        arg.text1content && (self.tgData.text[1].content = arg.text1content);
+        arg.text1pos && (self.tgData.text[1].pos = arg.text1pos);
+        arg.text1font && (self.tgData.text[1].font = arg.text1font);
+        arg.text1size && (self.tgData.text[1].size  = arg.text1size);
+        arg.text2content && (self.tgData.text[2].content = arg.text2content);
+        arg.text2pos && (self.tgData.text[2].pos = arg.text2pos);
+        arg.text2font && (self.tgData.text[2].font = arg.text2font);
+        arg.text2size && (self.tgData.text[2].size  = arg.text2size);
+        arg.effect && (self.tgData.effect = arg.effect);
+        arg.sizew && (self.tgData.size.w = arg.sizew);
+        arg.sizeh && (self.tgData.size.h = arg.sizeh);
 
         if (!arg.colorbg && !arg.colortext && !arg.colorpoint) {
             self.randomColor(self.colorList[3]);
@@ -227,7 +233,9 @@ const app = new Vue({
             const self = this;
 
             self.tgData.text.forEach(txt => {
-                txt.content = txt.content.replace(/<iframe/gi, '&lt;iframe');
+                txt.content = txt.content
+                    .replace(/<iframe/gi, '&lt;iframe')
+                    .replace(/\n/g, '<br>');
             });
 
             let str = '?';

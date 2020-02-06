@@ -28,6 +28,7 @@
         }
         body {
             background-color: #e5eaef;
+            touch-action: manipulation;
         }
         .scale0_5 {
             transform: scale(0.5);
@@ -37,7 +38,10 @@
             display: none;
         }
         .fit-image {
-            width: 100%;
+            /* width: 100%; */
+            /* min-height: 50vh; */
+            max-width: 100%;
+            max-height: 70vh;
         }
         .preview-image {
             height: 56px;
@@ -283,7 +287,7 @@
             <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-2">
                 <div class="card">
                     <div class="cardTitle"><i class="fas fa-edit"></i> テキスト</div>
-                    <p class="sub">&lt;br&gt;で改行、&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。フォントはインストールしているものだけ正しく適用されます。</p>
+                    <p class="sub">&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。フォントはインストールしているものだけ正しく適用されます。</p>
 
                     <div class="pure-g">
                         <div v-for="t, index in tgData.text" class="pure-u-1-3 tabTitle" :class="{'selected': tab.text === index}" @click="tab.text = index">
@@ -373,10 +377,10 @@
                                         </select>
                                     </div>
                                     <div class="pure-g pb10">
-                                        <div class="pure-u-1-4 taRight">
+                                        <div class="pure-u-1-8 taRight">
                                             <div class="p10">幅</div>
                                         </div>
-                                        <input v-model="tgData.size.w" type="number" placeholder="1280" class="pure-u-1-4">
+                                        <input v-model="tgData.size.w" type="number" placeholder="1280" class="pure-u-3-8">
                                         <div class="pure-u-1-4 taRight">
                                             <div class="p10">高さ</div>
                                         </div>

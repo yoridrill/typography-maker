@@ -216,6 +216,12 @@ const app = new Vue({
             self.randomColor(self.colorList[3]);
             self.setRandomColor(self.colorList[3]);
         }
+        if (arg.makerlayout && arg.makerlayout === 'top') {
+            const appDom = document.getElementById('app');
+            const canvasDom = document.getElementById('tgCanvas');
+            canvasDom.classList.remove('fit-image');
+            appDom.insertBefore(canvasDom, appDom.firstChild);
+        }
     },
     mounted: function() {
         const self = this;

@@ -121,7 +121,6 @@
         .sub {
             color: rgba(0, 0, 0, 0.67);
             font-size: small;
-            padding-left: 10px;
         }
         .card {
             background-color: #fff;
@@ -152,7 +151,7 @@
             background-image: initial;
         }
         .fuwaShadow{
-            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
         .formImageSelect {
             position: relative;
@@ -173,6 +172,152 @@
             font-size: xx-small;
             color: rgba(0, 0, 0, 0.67);
         }
+        .fabWrapper {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+        }
+        .fab {
+            position: relative;
+            display: block;
+            width: 56px;
+            height: 56px;
+            background: #03a9f4;
+            text-align: center;
+            border-radius: 50%;
+            transition: .3s;
+            box-shadow: 4px 6px 20px 0 rgba(0,0,0,.2), 1px 2px 10px 0 rgba(0,0,0,.4);
+            z-index: 2;
+        }
+
+        .fab:hover {
+            box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
+        }
+        .absolute {
+            position: absolute;
+        }
+        .fab i {
+            color: white;
+            line-height: 56px;
+            font-size: 18px;
+        }
+        .cover {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,.7);
+            top: 0;
+            left: 0;
+        }
+        /* form starting stylings ------------------------------- */
+        input               {
+          font-size:18px;
+          padding:10px 0 10px 0;
+          display:block;
+          border:none;
+          border-bottom:1px solid #757575;
+        }
+        input:focus         { outline:none; }
+
+        /* BOTTOM BARS ================================= */
+        .bar    { position:relative; display:block;  }
+        .bar:before, .bar:after     {
+          content:'';
+          height:2px;
+          width:0;
+          bottom:1px;
+          position:absolute;
+          background:#5264AE;
+          transition:0.2s ease all;
+          -moz-transition:0.2s ease all;
+          -webkit-transition:0.2s ease all;
+        }
+        .bar:before {
+          left:50%;
+        }
+        .bar:after {
+          right:50%;
+        }
+
+        /* active state */
+        input:focus ~ .bar:before, input:focus ~ .bar:after {
+          width:50%;
+        }
+
+        /* HIGHLIGHTER ================================== */
+        .highlight {
+          position:absolute;
+          height:60%;
+          top:25%;
+          left:0;
+          pointer-events:none;
+          opacity:0.5;
+        }
+
+        /* active state */
+        input:focus ~ .highlight {
+          -webkit-animation:inputHighlighter 0.3s ease;
+          -moz-animation:inputHighlighter 0.3s ease;
+          animation:inputHighlighter 0.3s ease;
+        }
+
+        /* ANIMATIONS ================ */
+        @-webkit-keyframes inputHighlighter {
+            from { background:#5264AE; }
+          to    { width:0; background:transparent; }
+        }
+        @-moz-keyframes inputHighlighter {
+            from { background:#5264AE; }
+          to    { width:0; background:transparent; }
+        }
+        @keyframes inputHighlighter {
+            from { background:#5264AE; }
+          to    { width:0; background:transparent; }
+        }
+
+        .chipWrapper {
+            position: relative;
+        }
+        .chip {
+            background-color: rgba(0,0,0,.1);
+            border-radius: 20px;
+            text-align: center;
+            width: 100%;
+            margin-top: 2px;
+        }
+        .posPopup {
+            position: absolute;
+            box-shadow: 4px 6px 20px 0 rgba(0,0,0,.2);
+            background-color: #03A9F4;
+            border-radius: 4px;
+            border: solid 1px rgba(0,0,0,0.2);
+            padding: 10px;
+            margin: 5px;
+            width: 270px;
+            right: 0;
+            bottom: 50px;
+            text-align: center;
+            transition:0.2s ease all;
+            -moz-transition:0.2s ease all;
+            -webkit-transition:0.2s ease all;
+            transform-origin:right bottom;
+        }
+        .posPopup a {
+            background-color: transparent;
+            border: solid 1px rgba(0,0,0,0.2);
+            color: #fff;
+        }
+        .posPopup a.active {
+            background-color: #0078e7;
+        }
+        .hideScale {
+            transform: scale(0);
+            bottom: 30px;
+            opacity: 0;
+        }
+        .taCenter {
+            text-align: center;
+        }
 
     </style>
 </head>
@@ -181,7 +326,7 @@
     <div id="app">
         <nav>
             <div class="pure-g">
-                <div class="pure-u-3-4">
+                <div class="pure-u-3-4 taCenter">
                     <a href="https://yoridrill.github.io/typography-maker/" class="title">タイポグラフィメーカー</a>
                 </div>
                 <div class="pure-u-1-4">
@@ -196,7 +341,7 @@
                     <div style="color: #03A9F4; padding: 10px">テキスト主体の見出し画像が作成できます！</div>
                     <p class="sub">変更がリアルタイムで反映されます。<br>URLに変更内容が画像以外は保存されるので、ブックマークすることでテンプレート代わりに使えます。<br>画像は右クリックで保存できます。</p>
                 </div>
-                <div class="p10">
+                <div class="pl10 pr10 pb10" v-if="true">
                     <div class="previewCard pure-g">
                         <div class="pure-u-4-5">
                             <div class="p10">
@@ -221,17 +366,84 @@
 
         <div class="pure-g p5" v-cloak>
 
+            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-2">
+                <div class="card">
+                    <div class="pure-g">
+                        <div class="pure-u-3-5">
+                            <div class="cardTitle"><i class="fas fa-edit"></i> テキスト</div>
+                        </div>
+                        <div class="sub pure-u-2-5">&lt;bb&gt;と&lt;/bb&gt;で文字サイズ大きめ。</div>
+                    </div>
+
+                    <div class="pt10 pr10">
+                        <form v-for="t, index in tgData.text" v-show="index === tab.text">
+                            <div class="pure-form">
+                                <textarea v-model="t.content" class="textbox" placeholder="テキスト"></textarea>
+                            </div>
+
+                            <div class="pure-g pb10">
+                                <div class="pure-u-1-4 taRight">
+                                    <div class="p10">サイズ</div>
+                                </div>
+                                <div class="pure-u-1-4">
+                                    <input v-model="t.size" type="number" placeholder="16" class="pure-u-1-1">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <div class="pure-u-1-4 taRight">
+                                    <div class="p10">位置</div>
+                                </div>
+                                <div class="pure-u-1-4 chipWrapper">
+                                    <a class="pure-button chip" :class="{'pure-button-primary': chip.text}" @click="chip.text=!chip.text">
+                                        <template v-for="p in textPos" v-if="p.str===t.pos">
+                                            <i class="fas" :class="p.faName"></i>
+                                            {{p.label}}
+                                        </template>
+                                    </a>
+                                    <div class="posPopup" :class="{'hideScale': !chip.text}">
+                                        <a class="pure-button" v-for="p in textPos" :class="{'active': p.str===t.pos}" @click="t.pos=p.str">
+                                            <i class="fas" :class="p.faName"></i>
+                                            {{p.label}}
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="pure-g pb10 group">
+                                <div class="pure-u-1-4 taRight">
+                                    <div class="pr10 pt10">フォント</div>
+                                </div>
+                                <div class="pure-u-1-3">
+                                    <input v-model="t.font" type="text" placeholder="sans-serif" class="pure-u-1-1">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
+
+                                <div class="pure-u-5-12">
+                                    <div class="pl10 pure-form">
+                                        <select v-model="t.font" class="pure-input-1">
+                                            <option v-for="f in fontList" :value="f.name">{{f.label}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="pure-g mt10">
+                        <div v-for="t, index in tgData.text" class="pure-u-1-3 tabTitle" :class="{'selected': tab.text === index}" @click="tab.text = index">
+                            {{index+1}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
                 <div class="card">
-                    <div class="cardTitle"><i class="fas fa-palette"></i> 配色</div>
-                    <p class="sub">背景、文字色、アクセントの3色設定できます。</p>
                     <div class="pure-g">
-                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'random'}" @click="tab.color = 'random'">
-                            おまかせ
+                        <div class="pure-u-1-2">
+                            <div class="cardTitle"><i class="fas fa-palette"></i> 配色</div>
                         </div>
-                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'custom'}" @click="tab.color = 'custom'">
-                            カスタム
-                        </div>
+                        <div class="sub pure-u-1-2">背景、文字、アクセントの3色を設定。</div>
                     </div>
 
                     <div v-show="tab.color === 'random'" class="p10">
@@ -239,34 +451,60 @@
                         color: cl.currColorText}" @click="setRandomColor(cl)">{{cl.label}}</button>
                     </div>
                     <div v-show="tab.color === 'custom'" class="pt10 pr10">
-                        <form class="pure-form">
+                        <form>
                             <div class="pure-g pb10">
                                 <div class="pure-u-1-2 taRight">
                                     <div class="p10">背景</div>
                                 </div>
-                                <input v-model="tgData.color.bg" type="text" placeholder="#ffffff" class="pure-u-1-2">
+                                <div class="pure-u-1-2">
+                                    <input v-model="tgData.color.bg" type="text" placeholder="#ffffff" class="pure-u-1-1">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
                             </div>
                             <div class="pure-g pb10">
                                 <div class="pure-u-1-2 taRight">
                                     <div class="p10">文字色</div>
                                 </div>
-                                <input v-model="tgData.color.text" type="text" placeholder="#000000" class="pure-u-1-2">
+                                <div class="pure-u-1-2">
+                                    <input v-model="tgData.color.text" type="text" placeholder="#000000" class="pure-u-1-1">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
                             </div>
                             <div class="pure-g pb10">
                                 <div class="pure-u-1-2 taRight">
                                     <div class="p10">アクセント</div>
                                 </div>
-                                <input v-model="tgData.color.point" type="text" placeholder="#ffff00" class="pure-u-1-2">
+                                <div class="pure-u-1-2">
+                                    <input v-model="tgData.color.point" type="text" placeholder="#ffff00" class="pure-u-1-1">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
                             </div>
                         </form>
+                    </div>
+
+                    <div class="pure-g mt10">
+                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'random'}" @click="tab.color = 'random'">
+                            おまかせ
+                        </div>
+                        <div class="pure-u-1-2 tabTitle" :class="{'selected': tab.color === 'custom'}" @click="tab.color = 'custom'">
+                            カスタム
+                        </div>
                     </div>
                 </div>
 
                 <div class="pt1">
                     <div class="card">
-                        <div class="cardTitle"><i class="fas fa-flask"></i> 効果</div>
-                        <p class="sub">アクセントの色を使って効果を付けます。</p>
-                        <div class="pl10 pr10 pb10">
+                        <div class="pure-g">
+                            <div class="pure-u-1-2">
+                                <div class="cardTitle"><i class="fas fa-flask"></i> 効果</div>
+                            </div>
+                            <div class="sub pure-u-1-2">アクセントの色を使った効果付け。</div>
+                        </div>
+
+                        <div class="p10">
                             <form class="pure-form">
                                 <select v-model="tgData.effect" class="pure-input-1">
                                     <option :value="undefined">なし</option>
@@ -276,60 +514,6 @@
                                 </select>
                             </form>
                         </div>
-                    </div>
-                </div>
-
-
-            </div>
-
-            <div class="pure-u-1 pure-u-sm-1-2 pure-u-lg-1-2">
-                <div class="card">
-                    <div class="cardTitle"><i class="fas fa-edit"></i> テキスト</div>
-                    <p class="sub">&lt;bb&gt;と&lt;/bb&gt;で挟むと大きくなります。フォントはインストールしているものだけ正しく適用されます。</p>
-
-                    <div class="pure-g">
-                        <div v-for="t, index in tgData.text" class="pure-u-1-3 tabTitle" :class="{'selected': tab.text === index}" @click="tab.text = index">
-                            {{index+1}}
-                        </div>
-                    </div>
-
-                    <div class="pt10 pr10">
-                        <form v-for="t, index in tgData.text" v-show="index === tab.text" class="pure-form">
-                            <textarea v-model="t.content" class="textbox" placeholder="テキスト"></textarea>
-                            <div class="pure-g pb10">
-                                <div class="pure-u-1-3 taRight">
-                                    <div class="p10">サイズ</div>
-                                </div>
-                                <input v-model="t.size" type="number" placeholder="16" class="pure-u-1-6">
-                                <div class="pure-u-1-2">
-                                    <div class="pl10">
-                                        <select v-model="t.font" class="pure-input-1 mt10">
-                                            <option v-for="f in fontList" :value="f.name">{{f.label}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pure-g pb10">
-                                <div class="pure-u-1-3 taRight">
-                                    <div class="p10">フォント</div>
-                                </div>
-                                <input v-model="t.font" type="text" placeholder="sans-serif" class="pure-u-2-3">
-                            </div>
-                            <div class="pure-g">
-                                <div class="pure-u-1-3 taRight">
-                                    <div class="p10">位置</div>
-                                </div>
-                                <div class="pure-u-2-3">
-                                    <div v-for="p in textPos" class="pure-u-1-3">
-                                        <label class="pure-radio">
-                                            <input type="radio" v-model="t.pos" :value="p.str">
-                                            {{p.label}}
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -368,8 +552,8 @@
                         <div class="card">
                             <div class="cardTitle"><i class="fas fa-ruler-combined"></i> サイズ</div>
                             <div class="pt10 pr10">
-                                <form class="pure-form">
-                                    <div class="pl10 pb10">
+                                <form>
+                                    <div class="pl10 pb10 pure-form">
                                         <select v-model="tgData.size" class="pure-input-1">
                                             <option v-for="s in sizeList" :value="s.size">{{s.label}}</option>
                                         </select>
@@ -378,11 +562,20 @@
                                         <div class="pure-u-1-8 taRight">
                                             <div class="p10">幅</div>
                                         </div>
-                                        <input v-model="tgData.size.w" type="number" placeholder="1280" class="pure-u-3-8">
+                                        <div class="pure-u-3-8">
+                                            <input v-model="tgData.size.w" type="number" placeholder="1280" class="pure-u-1-1">
+                                            <span class="highlight"></span>
+                                            <span class="bar"></span>
+                                        </div>
+
                                         <div class="pure-u-1-4 taRight">
                                             <div class="p10">高さ</div>
                                         </div>
-                                        <input v-model="tgData.size.h" type="number" placeholder="670" class="pure-u-1-4">
+                                        <div class="pure-u-1-4">
+                                            <input v-model="tgData.size.h" type="number" placeholder="670" class="pure-u-1-1">
+                                            <span class="highlight"></span>
+                                            <span class="bar"></span>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -395,6 +588,16 @@
         <section class="copyright">
             © 2020 タイポグラフィメーカー
         </section>
+
+        <div class="fabWrapper" v-if="false">
+            <!-- <div class="cover"></div> -->
+            <a href="#" class="fab" ontouchstart="">
+                <i class="fas fa-bookmark"></i>
+            </a>
+            <div class="clip" style="position: absolute; right: 80px; bottom: -2px;">
+                <canvas ref="prCanvas" class="preview-image" :width="tgData.size.w" :height="tgData.size.h"></canvas>
+            </div>
+        </div>
 
         <div ref="html" class="none">
             <div class="wrapper" :class="tgData.effect" :style="{backgroundColor: tgData.color.bg}">

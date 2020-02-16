@@ -39,33 +39,45 @@ const app = new Vue({
             color: 'random',
             text: 0
         },
+        chip: {
+            text: false
+        },
         textPos: [{
             str: 'tl',
-            label: '左上'
+            label: '左上',
+            faName: 'fa-align-right fa-rotate-180'
         }, {
             str: 'cc',
-            label: '中央'
+            label: '中央',
+            faName: 'fa-align-center icon-flip-vertical'
         }, {
             str: 'tr',
-            label: '右上'
+            label: '右上',
+            faName: 'fa-align-left fa-rotate-180'
         }, {
             str: 'bl',
-            label: '左下'
+            label: '左下',
+            faName: 'fa-align-left'
         }, {
             str: 'bc',
-            label: '中下'
+            label: '中下',
+            faName: 'fa-align-center'
         }, {
             str: 'br',
-            label: '右下'
+            label: '右下',
+            faName: 'fa-align-right'
         }, {
             str: 'vl',
-            label: '縦左'
+            label: '縦左',
+            faName: 'fa-align-left fa-rotate-90'
         }, {
             str: 'vc',
-            label: '縦中'
+            label: '縦中',
+            faName: 'fa-align-right fa-rotate-270'
         }, {
             str: 'vr',
-            label: '縦右'
+            label: '縦右',
+            faName: 'fa-align-right fa-rotate-270'
         }],
         fontList: [
             {
@@ -186,6 +198,7 @@ const app = new Vue({
     },
     created: function() {
         const self = this;
+
         if (!location.search) return;
 
         const arg = location.search.substring(1)
@@ -261,6 +274,9 @@ const app = new Vue({
                 }
             }
             return str;
+        },
+        isMobile: function() {
+            return window.innerWidth < 568;
         }
     },
     watch: {
